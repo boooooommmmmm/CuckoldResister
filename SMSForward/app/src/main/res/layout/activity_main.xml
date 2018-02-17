@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.darkspede.smsforward.smsforward.MainActivity">
+    tools:context="com.Sven.CuckoldResister.CuckoldResister.MainActivity">
 
     <Button
         android:id="@+id/forward_button"

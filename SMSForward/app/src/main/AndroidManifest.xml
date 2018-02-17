@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.darkspede.smsforward.smsforward">
+    package="com.Sven.CuckoldResister.CuckoldResister">
 
     <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
     <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name="com.Sven.CuckoldResister.CuckoldResister.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".SmsForward" android:permission="android.permission.SEND_SMS">
+        <receiver android:name="com.Sven.CuckoldResister.CuckoldResister.SmsForward" android:permission="android.permission.SEND_SMS">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>

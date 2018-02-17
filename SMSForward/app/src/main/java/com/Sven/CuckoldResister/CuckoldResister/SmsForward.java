@@ -1,4 +1,4 @@
-package com.darkspede.smsforward.smsforward;
+package com.Sven.CuckoldResister.CuckoldResister;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

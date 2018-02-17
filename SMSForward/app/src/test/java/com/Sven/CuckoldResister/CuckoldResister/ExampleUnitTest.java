@@ -1,4 +1,4 @@
-package com.darkspede.smsforward.smsforward;
+package com.Sven.CuckoldResister.CuckoldResister;
 
 import org.junit.Test;
 
