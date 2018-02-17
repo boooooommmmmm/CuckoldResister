@@ -1,10 +1,7 @@
 package com.darkspede.smsforward.smsforward;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -19,8 +16,6 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.app.Service.START_STICKY;
 
 public class MainActivity extends AppCompatActivity {
     public static String InfoMessage = "";
@@ -43,11 +38,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.onCreate(savedInstanceState);
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        onStartCommand();
 
         txtphoneNo = (EditText) findViewById(R.id.phone_input);
         txtphoneNo = (EditText) findViewById(R.id.phone_input);
@@ -224,14 +215,6 @@ public class MainActivity extends AppCompatActivity {
 
     public List<String> getPhoneList(){
         return PhoneList;
-    }
-
-
-    public int onStartCommand() {
-        OutgoingObserver outgoingObserver = new OutgoingObserver(new Handler());
-        ContentResolver contentResolver = this.getApplicationContext().getContentResolver();
-        contentResolver.registerContentObserver(Uri.parse("content://sms/sent"), true, outgoingObserver);
-        return START_STICKY;
     }
 
 }
