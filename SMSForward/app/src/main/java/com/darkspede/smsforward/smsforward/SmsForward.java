@@ -9,7 +9,9 @@ import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -52,7 +54,10 @@ public class SmsForward extends BroadcastReceiver {
                 String message = sb.toString();
 
                 MainActivity.SetInfoMessage("Message Get: " + message);
-                sendSMSMessage(message);
+                if(!message.startsWith("[Forward]")){
+                    sendSMSMessage_sms(message,sender);
+                }
+
 
                 // prevent any other broadcast receivers from receiving broadcast
                 // abortBroadcast();
@@ -68,7 +73,7 @@ public class SmsForward extends BroadcastReceiver {
 
             String message = "[Get incoming phone call]: " + savedNumber;
             MainActivity.SetInfoMessage("[Get incoming phone call]: " + message);
-            sendSMSMessage(message);
+            sendSMSMessage_sms_phone(message);
 
         }
 //        else {
@@ -88,7 +93,25 @@ public class SmsForward extends BroadcastReceiver {
 //        }
     }
 
-    public static void sendSMSMessage(String _message) {
+    public static void sendSMSMessage_sms(String _message, String _phoneNumber) {
+        MainActivity mainActivity = new MainActivity();
+        phoneList = mainActivity.getPhoneList();
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        try {
+            for (int i = 0; i < phoneList.size(); i++) {
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[From Phone: " + _phoneNumber + "] "
+                        +"[Time: " + sdf.format(cal.getTime()) + "] "+ "[Message]: " + _message, null, null);
+                MainActivity.SetInfoMessage("Forward Message to " + phoneList.get(i) + " added");
+                Log.d("sven", "MainActivity. message sent");
+            }
+        } catch (Exception e) {
+            MainActivity.SetInfoMessage(e.getMessage());
+        }
+    }
+
+    public static void sendSMSMessage_sms_phone(String _message) {
         MainActivity mainActivity = new MainActivity();
         phoneList = mainActivity.getPhoneList();
         try {

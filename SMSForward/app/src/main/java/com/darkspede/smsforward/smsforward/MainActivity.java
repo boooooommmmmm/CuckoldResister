@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 PhoneList.add(_newPhone);
                 SetInfoMessage("New number " + _newPhone + " added");
-                SmsForward.sendSMSMessage("Message Forward Service Added");
+                SmsForward.sendSMSMessage_sms("Message Forward Service Added", "");
                 Log.d("sven", "MainActivity. Forward Service Added");
 
                 ListToString();
