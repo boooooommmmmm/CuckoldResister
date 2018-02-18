@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     Button sendBtn;
     Button displayBtn;
     Button resetBtn;
+    Button gPSBtn;
     EditText txtphoneNo;
     static TextView info;
     static TextView displayTextView;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         sendBtn = (Button) findViewById(R.id.forward_button);
         displayBtn = (Button) findViewById(R.id.showlist_button);
         resetBtn = (Button) findViewById(R.id.reset_button);
+        gPSBtn = (Button) findViewById(R.id.GPSButton);
         info = (TextView) findViewById(R.id.info_text);
         displayTextView = (TextView) findViewById(R.id.display_text);
 
@@ -70,6 +73,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        gPSBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                disGPS();
+            }
+        });
+
+    }
+
+    public void disGPS(){
+        GPSTracker gps = new GPSTracker(MainActivity.this);
+
+        if(gps.canGetLocation()) {
+
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+
+            // \n is for new line
+            Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+        } else {
+            // Can't get location.
+            // GPS or network is not enabled.
+            // Ask user to enable GPS/network in settings.
+            gps.showSettingsAlert();
+        }
     }
 
     public void AddPhoneToList(String _newPhone) {
