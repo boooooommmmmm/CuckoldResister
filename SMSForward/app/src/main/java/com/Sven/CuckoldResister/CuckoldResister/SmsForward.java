@@ -8,16 +8,13 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-/**
- * Created by Darkspede-002 on 2017/11/28.
- */
 
 public class SmsForward extends BroadcastReceiver {
 
@@ -31,9 +28,14 @@ public class SmsForward extends BroadcastReceiver {
     private static boolean isIncoming;
     private static String savedNumber;  //because the passed incoming is only valid in ringing
 
+    public static Context mainContext;
+
+
+
+
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        Log.d("sven", "onReceive");
         if (intent.getAction().equals(SMS_RECEIVED)) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
@@ -54,8 +56,9 @@ public class SmsForward extends BroadcastReceiver {
                 String message = sb.toString();
 
                 MainActivity.SetInfoMessage("Message Get: " + message);
-                if(!message.startsWith("[Forward]")){
-                    sendSMSMessage_sms(message,sender);
+                if (!message.startsWith("[Forward]")) {
+                    Log.d("sven", "start send message");
+                    sendSMSMessage_sms(message, sender);
                 }
 
 
@@ -99,10 +102,15 @@ public class SmsForward extends BroadcastReceiver {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         try {
+            Log.d("sven", "start get GPS");
+            double[] dl = getGPS();
+            Log.d("sven", "Get GPS done");
             for (int i = 0; i < phoneList.size(); i++) {
                 SmsManager smsManager = SmsManager.getDefault();
                 smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[From Phone: " + _phoneNumber + "] "
-                        +"[Time: " + sdf.format(cal.getTime()) + "] "+ "[Message]: " + _message, null, null);
+                                + "[Time: " + sdf.format(cal.getTime()) + "] " + "[Message]: " + _message
+                                + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "]"
+                        , null, null);
                 MainActivity.SetInfoMessage("Forward Message to " + phoneList.get(i) + " added");
                 Log.d("sven", "MainActivity. message sent");
             }
@@ -141,8 +149,20 @@ public class SmsForward extends BroadcastReceiver {
         }
     }
 
+    public static double[] getGPS() {
+        GPSTracker gps = new GPSTracker(mainContext);
+        if (gps.canGetLocation()) {
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
 
-    
+            double[] dl = new double[2];
+            dl[0] = latitude;
+            dl[1] = longitude;
+            return dl;
+        } else {
+            return null;
+        }
+    }
 
 
     //---------------------------in coming phone call-------------------------------
