@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private String MessageData = "";
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
     private String DisplayMessage = "";
+    private static GPSTracker gps;
 
     Button sendBtn;
     Button displayBtn;
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void displayGPS(){
-        GPSTracker gps = new GPSTracker(MainActivity.this);
+        gps = new GPSTracker(MainActivity.this);
 
         if(gps.canGetLocation()) {
             double latitude = gps.getLatitude();
@@ -112,10 +113,8 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             SetInfoMessage("Number " + _newPhone + " exits.");
-            //Log.d("sven", "MainActivity. phone number exited");
         }
     }
-
 
     public static  void sendSMSMessage(String _message) {
         try {
@@ -235,6 +234,20 @@ public class MainActivity extends AppCompatActivity {
 
     public List<String> getPhoneList(){
         return PhoneList;
+    }
+
+    public double[] getGPS() {
+        if (gps.canGetLocation()) {
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            Log.d("sven","mainActivity: " + latitude+ "|||"+longitude);
+            double[] dl = new double[2];
+            dl[0] = latitude;
+            dl[1] = longitude;
+            return dl;
+        } else {
+            return null;
+        }
     }
 
 }

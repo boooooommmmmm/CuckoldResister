@@ -1,17 +1,14 @@
 package com.Sven.CuckoldResister.CuckoldResister;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.util.Log;
 
 public class GPSTracker extends Service implements LocationListener {
@@ -25,7 +22,7 @@ public class GPSTracker extends Service implements LocationListener {
     boolean isNetworkEnabled = false;
 
     // Flag for GPS status
-    boolean canGetLocation = false;
+    public static boolean canGetLocation = false;
 
     Location location; // Location
     double latitude; // Latitude
@@ -105,7 +102,6 @@ public class GPSTracker extends Service implements LocationListener {
         return location;
     }
 
-
     /**
      * Stop using GPS listener
      * Calling this function will stop using GPS in your app.
@@ -183,8 +179,64 @@ public class GPSTracker extends Service implements LocationListener {
 //        // Showing Alert Message
 //        alertDialog.show();
 //    }
+    @SuppressLint("MissingPermission")
     @Override
     public void onLocationChanged(Location location) {
+
+        try {
+            locationManager = (LocationManager) mContext
+                    .getSystemService(LOCATION_SERVICE);
+
+            // Getting GPS status
+            isGPSEnabled = locationManager
+                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            // Getting network status
+            isNetworkEnabled = locationManager
+                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            if (!isGPSEnabled && !isNetworkEnabled) {
+                // No network provider is enabled
+            } else {
+                this.canGetLocation = true;
+                if (isNetworkEnabled) {
+                    locationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER,
+                            MIN_TIME_BW_UPDATES,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                    Log.d("Network", "Network");
+                    if (locationManager != null) {
+                        location = locationManager
+                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        if (location != null) {
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                        }
+                    }
+                }
+                // If GPS enabled, get latitude/longitude using GPS Services
+                if (isGPSEnabled) {
+                    if (location == null) {
+                        locationManager.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER,
+                                MIN_TIME_BW_UPDATES,
+                                MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+                        Log.d("GPS Enabled", "GPS Enabled");
+                        if (locationManager != null) {
+                            location = locationManager
+                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if (location != null) {
+                                latitude = location.getLatitude();
+                                longitude = location.getLongitude();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 

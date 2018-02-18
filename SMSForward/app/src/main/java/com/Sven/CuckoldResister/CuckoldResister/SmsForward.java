@@ -8,7 +8,6 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,18 +18,17 @@ import java.util.List;
 public class SmsForward extends BroadcastReceiver {
 
     private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
-    private MainActivity mActivity;
-    public static List<String> phoneList = new ArrayList<String>();
+    private static MainActivity mActivity;
+    private static List<String> phoneList = new ArrayList<String>();
+    private static Calendar cal;
+    private static double[] dl;
+    private static SimpleDateFormat sdf;
 
     //incmoing phone call
     private static int lastState = TelephonyManager.CALL_STATE_IDLE;
     private static Date callStartTime;
     private static boolean isIncoming;
     private static String savedNumber;  //because the passed incoming is only valid in ringing
-
-    public static Context mainContext;
-
-
 
 
     @Override
@@ -57,10 +55,9 @@ public class SmsForward extends BroadcastReceiver {
 
                 MainActivity.SetInfoMessage("Message Get: " + message);
                 if (!message.startsWith("[Forward]")) {
-                    Log.d("sven", "start send message");
+                    Log.d("sven", "SMSFORWARD: start send message");
                     sendSMSMessage_sms(message, sender);
                 }
-
 
                 // prevent any other broadcast receivers from receiving broadcast
                 // abortBroadcast();
@@ -96,32 +93,40 @@ public class SmsForward extends BroadcastReceiver {
 //        }
     }
 
-    public static void sendSMSMessage_sms(String _message, String _phoneNumber) {
+    public void sendSMSMessage_sms(String _message, String _phoneNumber) {
+        //updateContext
         MainActivity mainActivity = new MainActivity();
         phoneList = mainActivity.getPhoneList();
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        double[] dl = mainActivity.getGPS();
+        Log.d("sven","SMSFORWARD: " + dl[0]+ "|||"+ dl[1]);
+        sdf = new SimpleDateFormat("HH:mm:ss");
+
         try {
-            Log.d("sven", "start get GPS");
-            double[] dl = getGPS();
-            Log.d("sven", "Get GPS done");
             for (int i = 0; i < phoneList.size(); i++) {
                 SmsManager smsManager = SmsManager.getDefault();
+                Log.d("sven", "SMSFORWARD: all configure done, sending....");
+
                 smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[From Phone: " + _phoneNumber + "] "
                                 + "[Time: " + sdf.format(cal.getTime()) + "] " + "[Message]: " + _message
                                 + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "]"
                         , null, null);
-                MainActivity.SetInfoMessage("Forward Message to " + phoneList.get(i) + " added");
-                Log.d("sven", "MainActivity. message sent");
+                Log.d("sven", "SMSFORWARD: sendSMSMessage_sms. message sent");
             }
         } catch (Exception e) {
             MainActivity.SetInfoMessage(e.getMessage());
         }
     }
 
-    public static void sendSMSMessage_sms_phone(String _message) {
+    public void sendSMSMessage_sms_phone(String _message) {
+        //updateContext
         MainActivity mainActivity = new MainActivity();
         phoneList = mainActivity.getPhoneList();
+        Calendar cal = Calendar.getInstance();
+        double[] dl = mainActivity.getGPS();
+        Log.d("sven","SMSFORWARD: " + dl[0]+ "|||"+ dl[1]);
+        sdf = new SimpleDateFormat("HH:mm:ss");
+
         try {
             for (int i = 0; i < phoneList.size(); i++) {
                 SmsManager smsManager = SmsManager.getDefault();
@@ -146,21 +151,6 @@ public class SmsForward extends BroadcastReceiver {
             }
         } catch (Exception e) {
             MainActivity.SetInfoMessage(e.getMessage());
-        }
-    }
-
-    public static double[] getGPS() {
-        GPSTracker gps = new GPSTracker(mainContext);
-        if (gps.canGetLocation()) {
-            double latitude = gps.getLatitude();
-            double longitude = gps.getLongitude();
-
-            double[] dl = new double[2];
-            dl[0] = latitude;
-            dl[1] = longitude;
-            return dl;
-        } else {
-            return null;
         }
     }
 
