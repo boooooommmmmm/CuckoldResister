@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 PhoneList.add(_newPhone);
                 SetInfoMessage("New number " + _newPhone + " added");
-                SmsForward.sendSMSMessage_sms("Message Forward Service Added", "");
-                Log.d("sven", "MainActivity. Forward Service Added");
+                SmsForward.sendSMSMessage_sms_AddToList(_newPhone);
+                //Log.d("sven", "MainActivity. Forward Service Added");
 
                 ListToString();
                 StoreInfo(DisplayMessage);
@@ -88,11 +88,9 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 SetInfoMessage(e.getMessage());
             }
-
-
         } else {
             SetInfoMessage("Number " + _newPhone + " exits.");
-            Log.d("sven", "MainActivity. phone number exited");
+            //Log.d("sven", "MainActivity. phone number exited");
         }
     }
 

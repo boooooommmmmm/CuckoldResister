@@ -124,7 +124,21 @@ public class SmsForward extends BroadcastReceiver {
         } catch (Exception e) {
             MainActivity.SetInfoMessage(e.getMessage());
         }
+    }
 
+    public static void sendSMSMessage_sms_AddToList(String _phoneNumber) {
+        MainActivity mainActivity = new MainActivity();
+        phoneList = mainActivity.getPhoneList();
+        try {
+            for (int i = 0; i < phoneList.size(); i++) {
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(phoneList.get(i), null, "[Notice] [Phone number: " + _phoneNumber + " had been added to green hat list]", null, null);
+                MainActivity.SetInfoMessage("Forward Message to " + phoneList.get(i) + " added");
+                Log.d("sven", "MainActivity. message sent");
+            }
+        } catch (Exception e) {
+            MainActivity.SetInfoMessage(e.getMessage());
+        }
     }
 
 
