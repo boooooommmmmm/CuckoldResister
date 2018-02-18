@@ -29,6 +29,7 @@ public class SmsForward extends BroadcastReceiver {
     private static Date callStartTime;
     private static boolean isIncoming;
     private static String savedNumber;  //because the passed incoming is only valid in ringing
+    private static List<String> address;
 
 
     @Override
@@ -97,19 +98,18 @@ public class SmsForward extends BroadcastReceiver {
         //updateContext
         MainActivity mainActivity = new MainActivity();
         phoneList = mainActivity.getPhoneList();
-        Calendar cal = Calendar.getInstance();
         double[] dl = mainActivity.getGPS();
-        Log.d("sven","SMSFORWARD: " + dl[0]+ "|||"+ dl[1]);
+        //address = mainActivity.getAddress();
+        Calendar cal = Calendar.getInstance();
         sdf = new SimpleDateFormat("HH:mm:ss");
 
         try {
             for (int i = 0; i < phoneList.size(); i++) {
                 SmsManager smsManager = SmsManager.getDefault();
                 Log.d("sven", "SMSFORWARD: all configure done, sending....");
-
                 smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[From Phone: " + _phoneNumber + "] "
                                 + "[Time: " + sdf.format(cal.getTime()) + "] " + "[Message]: " + _message
-                                + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "]"
+                                + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
                         , null, null);
                 Log.d("sven", "SMSFORWARD: sendSMSMessage_sms. message sent");
             }
@@ -122,9 +122,9 @@ public class SmsForward extends BroadcastReceiver {
         //updateContext
         MainActivity mainActivity = new MainActivity();
         phoneList = mainActivity.getPhoneList();
-        Calendar cal = Calendar.getInstance();
         double[] dl = mainActivity.getGPS();
-        Log.d("sven","SMSFORWARD: " + dl[0]+ "|||"+ dl[1]);
+        //address = mainActivity.getAddress();
+        Calendar cal = Calendar.getInstance();
         sdf = new SimpleDateFormat("HH:mm:ss");
 
         try {

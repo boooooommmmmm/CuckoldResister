@@ -4,12 +4,18 @@ import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class GPSTracker extends Service implements LocationListener {
 
@@ -147,6 +153,31 @@ public class GPSTracker extends Service implements LocationListener {
         return this.canGetLocation;
     }
 
+    public List<String> getAddress() {
+        Geocoder geocoder;
+        List<Address> addresses = null;
+        List<String> result = null;
+
+        try {
+            geocoder = new Geocoder(mContext, Locale.getDefault());
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (addresses != null) {
+
+            result.set(0, addresses.get(0).getAddressLine(0)); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            result.set(1, addresses.get(0).getLocality());
+            result.set(2, addresses.get(0).getAdminArea());
+            result.set(3, addresses.get(0).getCountryName());
+            result.set(4, addresses.get(0).getPostalCode());
+            result.set(5, addresses.get(0).getFeatureName()); // Only if available else return NULL
+
+            return result;
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Function to show settings alert dialog.

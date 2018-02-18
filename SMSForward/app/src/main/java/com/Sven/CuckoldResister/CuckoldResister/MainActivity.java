@@ -250,4 +250,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+//    public List<String> getAddress(){
+//        List<String> address = gps.getAddress();
+//        return address;
+//    }
+
 }
