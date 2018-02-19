@@ -108,9 +108,14 @@ public class SmsForward extends BroadcastReceiver {
                 SmsManager smsManager = SmsManager.getDefault();
                 Log.d("sven", "SMSFORWARD: all configure done, sending....");
                 smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[From Phone: " + _phoneNumber + "] "
-                                + "[Time: " + sdf.format(cal.getTime()) + "] " + "[Message]: " + _message
+                                + "[Time: " + sdf.format(cal.getTime()) + "] "
                                 + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
                         , null, null);
+
+                smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + _message
+                        , null, null);
+
+
                 Log.d("sven", "SMSFORWARD: sendSMSMessage_sms. message sent");
             }
         } catch (Exception e) {

@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         if(gps.canGetLocation()) {
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
-
             Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
         } else {
         }
@@ -192,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public static void SetInfoMessage(String _message) {
         info.setText(_message);
         Log.d("sven", "MainActivity.setInfoMessage successful");
@@ -249,10 +247,5 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
-
-//    public List<String> getAddress(){
-//        List<String> address = gps.getAddress();
-//        return address;
-//    }
 
 }
