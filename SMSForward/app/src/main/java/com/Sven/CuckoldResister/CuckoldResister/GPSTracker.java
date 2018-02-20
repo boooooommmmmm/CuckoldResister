@@ -153,63 +153,34 @@ public class GPSTracker extends Service implements LocationListener {
         return this.canGetLocation;
     }
 
-    public List<String> getAddress() {
-        Geocoder geocoder;
-        List<Address> addresses = null;
-        List<String> result = null;
-
-        try {
-            geocoder = new Geocoder(mContext, Locale.getDefault());
-            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (addresses != null) {
-
-            result.set(0, addresses.get(0).getAddressLine(0)); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-            result.set(1, addresses.get(0).getLocality());
-            result.set(2, addresses.get(0).getAdminArea());
-            result.set(3, addresses.get(0).getCountryName());
-            result.set(4, addresses.get(0).getPostalCode());
-            result.set(5, addresses.get(0).getFeatureName()); // Only if available else return NULL
-
-            return result;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Function to show settings alert dialog.
-     * On pressing the Settings button it will launch Settings Options.
-     */
-//    public void showSettingsAlert() {
-//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+    //get address does not work
+//    public List<String> getAddress() {
+//        Geocoder geocoder;
+//        List<Address> addresses = null;
+//        List<String> result = null;
 //
-//        // Setting Dialog Title
-//        alertDialog.setTitle("GPS is settings");
+//        try {
+//            geocoder = new Geocoder(mContext, Locale.getDefault());
+//            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        if (addresses != null) {
 //
-//        // Setting Dialog Message
-//        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+//            result.set(0, addresses.get(0).getAddressLine(0)); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+//            result.set(1, addresses.get(0).getLocality());
+//            result.set(2, addresses.get(0).getAdminArea());
+//            result.set(3, addresses.get(0).getCountryName());
+//            result.set(4, addresses.get(0).getPostalCode());
+//            result.set(5, addresses.get(0).getFeatureName()); // Only if available else return NULL
 //
-//        // On pressing the Settings button.
-//        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int which) {
-//                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                mContext.startActivity(intent);
-//            }
-//        });
-//
-//        // On pressing the cancel button
-//        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-//
-//        // Showing Alert Message
-//        alertDialog.show();
+//            return result;
+//        } else {
+//            return null;
+//        }
 //    }
+
+
     @SuppressLint("MissingPermission")
     @Override
     public void onLocationChanged(Location location) {

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
@@ -65,41 +66,35 @@ public class SmsForward extends BroadcastReceiver {
             }
         }
 
-        //We listen to two intents.  The new outgoing call only tells us of an outgoing call.  We use it to get the number.
-        if (intent.getAction().equals("android.intent.action.PHONE_STATE") && lastState == 0) {
+        if (intent.getAction().equals("android.intent.action.PHONE_STATE")) {
+            switch (lastState) {
+                case TelephonyManager.CALL_STATE_IDLE:
+                    lastState = TelephonyManager.CALL_STATE_RINGING;
+                    savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
+                    savedNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
 
-            savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
-            savedNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
-            Log.d("sven", "SmsForward. get incoming phone call: " + savedNumber);
+                    String message = "[Get incoming phone call]: " + savedNumber;
+                    MainActivity.SetInfoMessage("[Get incoming phone call]: " + message);
+                    sendSMSMessage_sms_phone("INCOMING", savedNumber);
+                    break;
 
-            String message = "[Get incoming phone call]: " + savedNumber;
-            MainActivity.SetInfoMessage("[Get incoming phone call]: " + message);
-            sendSMSMessage_sms_phone(message);
+                case TelephonyManager.CALL_STATE_RINGING:
+                    lastState = TelephonyManager.CALL_STATE_IDLE;
+                    savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
+                    savedNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
 
+                    sendSMSMessage_sms_phone("CALLEND", savedNumber);
+                    break;
+            }
         }
-//        else {
-//            String stateStr = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
-//            String number = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
-//            int state = 0;
-//            if (stateStr.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
-//                state = TelephonyManager.CALL_STATE_IDLE;
-//            } else if (stateStr.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
-//                state = TelephonyManager.CALL_STATE_OFFHOOK;
-//            } else if (stateStr.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
-//                state = TelephonyManager.CALL_STATE_RINGING;
-//            }
-//
-//
-//            onCallStateChanged(context, state, number);
-//        }
     }
+
 
     public void sendSMSMessage_sms(String _message, String _phoneNumber) {
         //updateContext
         MainActivity mainActivity = new MainActivity();
         phoneList = mainActivity.getPhoneList();
         double[] dl = mainActivity.getGPS();
-        //address = mainActivity.getAddress();
         Calendar cal = Calendar.getInstance();
         sdf = new SimpleDateFormat("HH:mm:ss");
 
@@ -123,21 +118,41 @@ public class SmsForward extends BroadcastReceiver {
         }
     }
 
-    public void sendSMSMessage_sms_phone(String _message) {
+    public void sendSMSMessage_sms_phone(String _message, String _phoneNumber) {
         //updateContext
         MainActivity mainActivity = new MainActivity();
         phoneList = mainActivity.getPhoneList();
         double[] dl = mainActivity.getGPS();
-        //address = mainActivity.getAddress();
         Calendar cal = Calendar.getInstance();
         sdf = new SimpleDateFormat("HH:mm:ss");
 
         try {
             for (int i = 0; i < phoneList.size(); i++) {
                 SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + _message, null, null);
-                MainActivity.SetInfoMessage("Forward Message to " + phoneList.get(i) + " added");
-                Log.d("sven", "MainActivity. message sent");
+                switch (_message){
+                    case "INCOMING":
+                        smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[INCOMING PHONE][From Phone: " + _phoneNumber + "] "
+                                        + "[Time: " + sdf.format(cal.getTime()) + "] "
+                                        + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                , null, null);
+                        break;
+
+                    case "RINGING":
+                        smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[RINGING PHONE][From Phone: " + _phoneNumber + "] "
+                                        + "[Time: " + sdf.format(cal.getTime()) + "] "
+                                        + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                , null, null);
+                        break;
+
+                    case "CALLEND":
+                        smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[CALL END][From Phone: " + _phoneNumber + "] "
+                                        + "[Time: " + sdf.format(cal.getTime()) + "] "
+                                        + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                , null, null);
+                        break;
+
+                }
+
             }
         } catch (Exception e) {
             MainActivity.SetInfoMessage(e.getMessage());
@@ -158,7 +173,6 @@ public class SmsForward extends BroadcastReceiver {
             MainActivity.SetInfoMessage(e.getMessage());
         }
     }
-
 
     //---------------------------in coming phone call-------------------------------
 //
