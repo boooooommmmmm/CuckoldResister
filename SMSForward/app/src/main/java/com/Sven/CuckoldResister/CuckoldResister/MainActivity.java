@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         gPSBtn = (Button) findViewById(R.id.GPSButton);
         info = (TextView) findViewById(R.id.info_text);
         displayTextView = (TextView) findViewById(R.id.display_text);
+        displayTextView.setMovementMethod(new ScrollingMovementMethod());
         mContext = getApplicationContext();
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
