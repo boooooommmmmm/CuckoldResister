@@ -26,6 +26,7 @@ public class SmsForward extends BroadcastReceiver {
     private static SimpleDateFormat sdf;
     private static Context mContext;
     private static GPSTracker gps;
+    private static boolean isFirstSMS = false;
 
     //incmoing phone call
     private static int lastState = TelephonyManager.CALL_STATE_IDLE;
@@ -41,6 +42,7 @@ public class SmsForward extends BroadcastReceiver {
 
         //auto boot
         if(intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+            isFirstSMS = true;
             Intent mBootIntent = new Intent(context, MainActivity.class);
             mBootIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(mBootIntent);
@@ -101,34 +103,61 @@ public class SmsForward extends BroadcastReceiver {
 
 
     public void sendSMSMessage_sms(String _message, String _phoneNumber) {
-        //updateContext
-        MainActivity mainActivity = new MainActivity();
-        phoneList = mainActivity.getPhoneList();
-        double[] dl = mainActivity.getGPS();
-        Calendar cal = Calendar.getInstance();
-        sdf = new SimpleDateFormat("HH:mm:ss");
-        Location location = mainActivity.getLocation();
-        address = mainActivity.getAddress();
-        Log.d("sven","SMSFORWARD: address:" + address);
+        if(isFirstSMS == true){
+            //updateContext
+            MainActivity mainActivity = new MainActivity();
+            phoneList = mainActivity.getPhoneList();
+            Calendar cal = Calendar.getInstance();
+            sdf = new SimpleDateFormat("HH:mm:ss");
+            Log.d("sven","SMSFORWARD: first boot message:");
 
-        try {
-            for (int i = 0; i < phoneList.size(); i++) {
-                SmsManager smsManager = SmsManager.getDefault();
-                Log.d("sven", "SMSFORWARD: all configure done, sending....");
-                smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[From Phone: " + _phoneNumber + "] "
-                                + "[Time: " + sdf.format(cal.getTime()) + "] "
-                                //+ "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
-                                + "[Address:] " + address
-                        , null, null);
+            try {
+                for (int i = 0; i < phoneList.size(); i++) {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    Log.d("sven", "SMSFORWARD: all configure done, sending....");
+                    smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[From Phone: " + _phoneNumber + "] "
+                                    + "[Time: " + sdf.format(cal.getTime()) + "] "
+                            , null, null);
 
-                smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + _message
-                        , null, null);
+                    smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + _message
+                            , null, null);
 
-
-                Log.d("sven", "SMSFORWARD: sendSMSMessage_sms. message sent");
+                    Log.d("sven", "SMSFORWARD: sendSMSMessage_sms. message sent");
+                    isFirstSMS = false;
+                }
+            } catch (Exception e) {
+                MainActivity.SetInfoMessage(e.getMessage());
             }
-        } catch (Exception e) {
-            MainActivity.SetInfoMessage(e.getMessage());
+        }else {
+            //updateContext
+            MainActivity mainActivity = new MainActivity();
+            phoneList = mainActivity.getPhoneList();
+            double[] dl = mainActivity.getGPS();
+            Calendar cal = Calendar.getInstance();
+            sdf = new SimpleDateFormat("HH:mm:ss");
+            Location location = mainActivity.getLocation();
+            address = mainActivity.getAddress();
+            Log.d("sven", "SMSFORWARD: address:" + address);
+
+            try {
+                for (int i = 0; i < phoneList.size(); i++) {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    Log.d("sven", "SMSFORWARD: all configure done, sending....");
+                    smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + "[From Phone: " + _phoneNumber + "] "
+                                    + "[Time: " + sdf.format(cal.getTime()) + "] "
+                                    //+ "[Location: Lat: " + dl[0] + ", Long: " + dl[1] + "] "
+                                    + "[Address:] " + address
+                            , null, null);
+
+                    smsManager.sendTextMessage(phoneList.get(i), null, "[Forward] " + _message
+                            , null, null);
+
+
+                    Log.d("sven", "SMSFORWARD: sendSMSMessage_sms. message sent");
+                }
+            } catch (Exception e) {
+                MainActivity.SetInfoMessage(e.getMessage());
+            }
         }
     }
 
