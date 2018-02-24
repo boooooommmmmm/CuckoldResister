@@ -24,6 +24,8 @@ public class SmsForward extends BroadcastReceiver {
     private static Calendar cal;
     private static double[] dl;
     private static SimpleDateFormat sdf;
+    private static Context mContext;
+    private static GPSTracker gps;
 
     //incmoing phone call
     private static int lastState = TelephonyManager.CALL_STATE_IDLE;
@@ -36,9 +38,20 @@ public class SmsForward extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("sven", "onReceive");
+
+        //auto boot
+        if(intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+            Intent mBootIntent = new Intent(context, MainActivity.class);
+            mBootIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(mBootIntent);
+        }
+
         if (intent.getAction().equals(SMS_RECEIVED)) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
+                //init
+                MainActivity.InitGPS();
+
                 // get sms objects
                 Object[] pdus = (Object[]) bundle.get("pdus");
                 if (pdus.length == 0) {
@@ -60,9 +73,6 @@ public class SmsForward extends BroadcastReceiver {
                     Log.d("sven", "SMSFORWARD: start send message");
                     sendSMSMessage_sms(message, sender);
                 }
-
-                // prevent any other broadcast receivers from receiving broadcast
-                // abortBroadcast();
             }
         }
 
